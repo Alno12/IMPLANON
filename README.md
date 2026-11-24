@@ -17,3 +17,7 @@ Nenhum dado de paciente é enviado a servidor: tudo roda no navegador e some ao 
 ## Publicação no Netlify
 
 Add new site → Import an existing project → GitHub → este repositório. Build command e publish directory em branco (raiz). Cada push na branch `main` publica de novo.
+
+## Pendências
+
+- [ ] Botão "Limpar tudo" que apaga as duas abas (consulta e inserção) de uma vez.
