@@ -21,3 +21,7 @@ Add new site → Import an existing project → GitHub → este repositório. Bu
 ## Pendências
 
 - [ ] Botão "Limpar tudo" que apaga as duas abas (consulta e inserção) de uma vez.
+- [ ] Bloco "Receita" com um botão de copiar em cada linha, para colar no sistema de atendimento:
+  - `Implanon NXT® 68 mg (etonogestrel)`
+  - `USO SUBDÉRMICO`
+  - `Aplicar 01 implante contraceptivo subdérmico, em dose única, na face interna do braço, por profissional habilitado, conforme técnica recomendada pelo fabricante.`
