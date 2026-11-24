@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Consulta Implante Etonogestrel</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono&display=swap">
+<style>
+/* Layout: formulário à esquerda, elegibilidade e nota ao vivo à direita; empilha no celular */
+:root{--bg:#f5f7f7;--card:#ffffff;--fg:#17221f;--muted:#5d6b67;--line:#d8e0de;--accent:#0f7a6c;--ok:#1d7a3a;--warn:#b26a00;--bad:#b3261e;--note:#eef4f2;
+--display:"Space Grotesk",system-ui,sans-serif;--body:"Inter",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101615;--card:#18201e;--fg:#e4ecea;--muted:#9aa9a5;--line:#2c3835;--accent:#4cc3b1;--ok:#5cc77a;--warn:#e0a640;--bad:#f08079;--note:#141c1a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#101615;--card:#18201e;--fg:#e4ecea;--muted:#9aa9a5;--line:#2c3835;--accent:#4cc3b1;--ok:#5cc77a;--warn:#e0a640;--bad:#f08079;--note:#141c1a;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:14px;line-height:1.5}
+.wrap{max-width:1200px;margin:0 auto;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font-family:var(--display);font-size:1.6rem;margin:0;text-wrap:balance}
+.sub{color:var(--muted);margin:4px 0 20px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.col{display:flex;flex-direction:column;gap:16px;min-width:0}
+h2{font-family:var(--display);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0}
+h3{font-size:.8rem;font-weight:600;color:var(--muted);margin:4px 0 0}
+.row{display:flex;flex-wrap:wrap;gap:12px}
+.row>label{flex:1 1 120px}
+label.f{display:flex;flex-direction:column;gap:4px;font-weight:500;font-size:.85rem}
+input,select,textarea{font:inherit;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);min-width:0}
+textarea{min-height:56px;resize:vertical}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.chk{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px dashed var(--line)}
+.chk:last-child{border-bottom:0}
+.chk input{margin-top:3px;accent-color:var(--accent)}
+.master{padding:8px 10px;border:1px solid var(--accent);border-radius:6px;font-weight:600;border-bottom:1px solid var(--accent)}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.8rem;font-weight:600;border:1px solid currentColor}
+.ok{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--bad)}
+.alerts{display:flex;flex-direction:column;gap:6px}
+.alert{padding:8px 10px;border-radius:6px;border-left:3px solid currentColor;background:var(--note);font-size:.85rem}
+.alert span{color:var(--fg)}
+.sticky{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}
+pre{font-family:var(--mono);font-size:.78rem;white-space:pre-wrap;word-break:break-word;background:var(--note);border:1px solid var(--line);border-radius:6px;padding:12px;margin:0;max-height:70vh;overflow:auto}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+button{font:inherit;font-weight:600;padding:8px 14px;border-radius:6px;border:1px solid var(--accent);background:var(--accent);color:var(--card);cursor:pointer}
+button.sec{background:transparent;color:var(--accent)}
+.hint{color:var(--muted);font-size:.8rem}
+</style>
+<script src="pdf-lib.min.js"></script>
+</head>
+<body>
+
+<div class="wrap">
+<h1>Consulta Implante Etonogestrel</h1>
+<p class="sub">Aconselhamento e avaliação pré-inserção do Implanon NXT® 68 mg. A nota é montada enquanto você preenche.</p>
+
+<div class="grid">
+<div class="col">
+
+<section>
+<h2>Identificação e contato</h2>
+<div class="row">
+<label class="f" style="flex-basis:260px">Nome completo<input id="nome"></label>
+<label class="f">Data de nascimento<input id="nasc" type="date"></label>
+</div>
+<label class="f">Contato para busca ativa
+<select id="autoriza"><option value="sim">Autoriza contato</option><option value="nao">Não autoriza contato</option></select></label>
+<div class="row" id="contatoBox">
+<label class="f" style="flex:0 1 80px">DDD<input id="ddd" inputmode="numeric" maxlength="3"></label>
+<label class="f">Telefone<input id="tel" inputmode="tel"></label>
+<label class="f" style="flex-basis:220px">E-mail<input id="email" type="email"></label>
+<label class="f" style="flex-basis:100%">Endereço<input id="end"></label>
+<label class="chk" style="border:0"><input type="checkbox" id="porCorreio"><span>Correio</span></label>
+<label class="chk" style="border:0"><input type="checkbox" id="porVisita"><span>Visita domiciliar</span></label>
+<label class="f" style="flex-basis:100%">Outro meio de contato<input id="outroContato"></label>
+</div>
+</section>
+
+<section>
+<h2>Antecedentes obstétricos</h2>
+<div class="row">
+<label class="f">G<input id="g" type="number" min="0" value="0"></label>
+<label class="f">PN<input id="p" type="number" min="0" value="0"></label>
+<label class="f">C<input id="c" type="number" min="0" value="0"></label>
+<label class="f">A<input id="a" type="number" min="0" value="0"></label>
+</div>
+<label class="f">Data do último parto/aborto<input id="dataParto" type="date"></label>
+</section>
+
+<section>
+<h2>Comorbidades e alergias</h2>
+<h3>Comorbidades</h3>
+<div class="row" id="comorbBox" style="gap:4px 16px"></div>
+<label class="f">Outras comorbidades<input id="comorb" placeholder="Texto livre"></label>
+<label class="f">Alergias medicamentosas<input id="alergias" placeholder="Ex.: dipirona. Vazio = nega"></label>
+<label class="f">Medicamentos em uso<input id="meds" placeholder="Ex.: sulfato ferroso. Vazio = nega"></label>
+</section>
+
+<section>
+<h2>Contracepção e ciclo</h2>
+<div class="row">
+<label class="f" style="flex-basis:220px">Método atual
+<input id="mac" list="macList" placeholder="Escolha ou digite o método">
+<datalist id="macList">
+<option value="Injetável trimestral (AMPD)"></option>
+<option value="Injetável mensal"></option>
+<option value="Pílula combinada"></option>
+<option value="Pílula de progestagênio"></option>
+<option value="DIU de cobre"></option>
+<option value="DIU hormonal"></option>
+<option value="Preservativo"></option>
+<option value="Nenhum"></option>
+</datalist></label>
+<label class="f">Última dose / início<input id="macData" type="date"></label>
+</div>
+<div class="row">
+<label class="f">DUM<input id="dum" type="date"></label>
+<label class="f" style="flex-basis:200px">Situação atual
+<select id="ciclo">
+<option value="menstrua">Menstruando</option>
+<option value="lact">Amenorreia da lactação</option>
+<option value="amen">Amenorreia em uso de método</option>
+</select></label>
+</div>
+<h3 id="cicloTit">Características do ciclo</h3>
+<div class="row">
+<label class="f">Regularidade
+<select id="reg"><option value=""></option><option>regular</option><option>irregular</option></select></label>
+<label class="f">Fluxo
+<select id="fluxo"><option value=""></option><option>escasso</option><option>moderado</option><option>aumentado</option></select></label>
+<label class="f">Duração (dias)<input id="dur" type="number" min="0" placeholder="Ex.: 5"></label>
+<label class="f">Cólicas
+<select id="colica"><option value=""></option><option>ausentes</option><option>leves</option><option>moderadas</option><option>intensas</option></select></label>
+</div>
+<div class="row" id="lactBox" hidden>
+<label class="f">Tempo pós-parto (semanas)<input id="ppSem" type="number" min="0"></label>
+<label class="f">Aleitamento
+<select id="aleit"><option value=""></option><option>exclusivo</option><option>predominante</option><option>misto</option></select></label>
+</div>
+</section>
+
+<section>
+<h2>Contraindicações</h2>
+<label class="chk master"><input type="checkbox" id="semCI"><span>Sem contraindicações (marca todos os itens)</span></label>
+<div id="checks"></div>
+<label class="f">Critério de exclusão de gravidez
+<select id="critGrav">
+<option value="auto">Automático (pelos dados acima)</option>
+<option value="hcg">β-hCG negativo</option>
+<option value="clinico">Critérios clínicos (OMS) preenchidos</option>
+</select></label>
+<label class="f" id="hcgBox" hidden>Data do β-hCG<input id="hcgData" type="date"></label>
+</section>
+
+<section>
+<h2>Inserção e ficha de cadastramento</h2>
+<div class="row">
+<label class="f">Data da inserção<input id="dataIns" type="date"></label>
+<label class="f">Retorno agendado<input id="retorno" type="date"></label>
+</div>
+<div class="row">
+<label class="f">Lote<input id="lote"></label>
+<label class="f">Validade<input id="validade" type="date"></label>
+</div>
+<label class="f">Estabelecimento de inserção<input id="estab"></label>
+<div class="row">
+<label class="f" style="flex-basis:220px">Médico<input id="medico" value="ALNO POIARES VIEIRA"></label>
+<label class="f">CRM<input id="crm" value="49410"></label>
+</div>
+<h3>Critérios de inclusão</h3>
+<div id="inclBox"></div>
+<label class="f">Outras indicações<input id="outrasInd"></label>
+</section>
+
+<section>
+<h2>Observações</h2>
+<textarea id="obs" placeholder="Texto livre que entra no fim da nota"></textarea>
+</section>
+</div>
+
+<div class="col sticky">
+<section>
+<h2>Elegibilidade</h2>
+<div id="status"></div>
+<div class="alerts" id="alerts"></div>
+</section>
+<section>
+<h2>Nota para o prontuário</h2>
+<pre id="nota"></pre>
+<div class="btns">
+<button id="copiar" type="button">Copiar nota</button>
+<button id="gerar" type="button">Gerar termo (PDF)</button>
+<button id="limpar" type="button" class="sec">Nova consulta</button>
+</div>
+<span class="hint" id="copyMsg" aria-live="polite"></span>
+<span class="hint" id="pdfMsg" aria-live="polite"></span>
+</section>
+</div>
+</div>
+</div>
+
+<script>
+const CHECKS=[
+["grav","Gravidez excluída com razoável segurança"],
+["mama","Sem câncer de mama atual ou suspeito"],
+["sang","Sem sangramento genital inexplicado que exija investigação"],
+["fig","Sem doença hepática grave ou tumor hepático relevante"],
+["tromb","Sem trombose ativa ou contraindicação identificada na avaliação"],
+["alerg","Sem alergia conhecida ao etonogestrel ou componentes"],
+["inter","Medicamentos em uso avaliados quanto a interações"],
+["orient","Orientações sobre sangramento irregular, efeitos adversos e IST realizadas"]];
+const INDUTORES=/carbamazep|fenito[ií]n|fenobarb|primidon|topiramat|oxcarbaz|rifamp|rifabut|efavirenz|nevirapin|ritonavir|erva.de.s[aã]o.jo[aã]o|hip[eé]rico|griseofulv|bosentan/i;
+const $=id=>document.getElementById(id);
+const COMORB=["Nenhuma","Hipertensão arterial","Diabetes mellitus","Hipotireoidismo","Obesidade","Enxaqueca","Epilepsia","Depressão/ansiedade","Tabagismo","Dislipidemia","HIV","Antecedente de trombose (TVP/TEP)","Lúpus (LES)","Cirurgia bariátrica"];
+$("comorbBox").innerHTML=COMORB.map((t,i)=>`<label class="chk" style="border:0;padding:2px 0"><input type="checkbox" id="cm_${i}"><span>${t}</span></label>`).join("");
+$("comorbBox").addEventListener("change",e=>{const i=+e.target.id.slice(3);if(i===0&&e.target.checked){COMORB.forEach((_,j)=>{if(j)$("cm_"+j).checked=false});$("comorb").value="";}else if(i>0&&e.target.checked)$("cm_0").checked=false;});
+$("checks").innerHTML=CHECKS.map(([k,t])=>`<label class="chk"><input type="checkbox" id="ck_${k}"><span>${t}</span></label>`).join("");
+
+function br(s){if(!s)return"__/__/____";const[y,m,d]=s.split("-");return`${d}/${m}/${y}`}
+function semanasDesde(s){if(!s)return null;return(Date.now()-new Date(s+"T12:00").getTime())/6048e5}
+function two(n){return String(n).padStart(2,"0")}
+function fmt(n){return n.toFixed(1).replace(".",",")}
+function tipoMac(s){s=s.toLowerCase();
+ if(/trimestral|ampd|depo|medroxi/.test(s))return"AMPD";
+ if(/mensal/.test(s))return"mensal";
+ if(/nenhum|sem m[eé]todo/.test(s)||!s.trim())return"nenhum";
+ if(/preserv|camisinha/.test(s))return"preserv";
+ return"outro";}
+
+$("semCI").addEventListener("click",e=>{CHECKS.forEach(([k])=>$("ck_"+k).checked=e.target.checked)});
+
+function render(){
+const v=id=>$(id).value.trim(), ck=k=>$("ck_"+k).checked;
+$("semCI").checked=CHECKS.every(([k])=>ck(k));
+const macNome=v("mac"), mac=tipoMac(macNome), wk=semanasDesde(v("macData"));
+const sit=v("ciclo"), lact=sit==="lact";
+$("lactBox").hidden=!lact; $("hcgBox").hidden=v("critGrav")!=="hcg";
+$("cicloTit").textContent=sit==="menstrua"?"Características do ciclo":"Características do ciclo antes da amenorreia";
+const pp=v("ppSem")===""?null:+v("ppSem"), aleit=v("aleit");
+const alerts=[]; let nivel="ok";
+const add=(cls,t)=>{alerts.push(`<div class="alert ${cls}"><span>${t}</span></div>`); if(cls==="bad")nivel="bad"; else if(cls==="warn"&&nivel!=="bad")nivel="warn";};
+
+// paridade
+const G=+v("g")||0,P=+v("p")||0,C=+v("c")||0,A=+v("a")||0;
+if(G!==P+C+A) add("warn",`Paridade discordante: G${G} diferente de PN+C+A (${P+C+A}). Confira, ou registre gestação atual.`);
+if(lact&&P+C===0) add("bad","Lactação com PN0 C0: corrija a paridade.");
+
+// gravidez
+let gravTxt="", apoio=false;
+const crit=v("critGrav");
+if(crit==="hcg"){gravTxt=`β-hCG negativo em ${br(v("hcgData"))}`; if(!v("hcgData"))add("warn","Informe a data do β-hCG.");}
+else if(crit==="clinico"){gravTxt="critérios clínicos da OMS para exclusão de gestação preenchidos";}
+else if(mac==="AMPD"&&wk!=null){
+ if(wk<=15) gravTxt=`última dose de AMPD há ${fmt(wk)} semanas, dentro da janela de 15 semanas`;
+ else {apoio=true;add("bad",`Última dose de AMPD há ${fmt(wk)} semanas, fora da janela. Solicite β-hCG antes de inserir.`);}
+}
+else if(lact&&pp!=null&&pp<26&&(aleit==="exclusivo"||aleit==="predominante")) gravTxt="critérios de LAM preenchidos (< 6 meses pós-parto, aleitamento exclusivo/predominante, amenorreia)";
+else if(mac==="AMPD") add("warn","Informe a data da última dose de AMPD.");
+else if(lact&&(pp==null||!aleit)) add("warn","Informe tempo pós-parto e tipo de aleitamento para avaliar o LAM.");
+else add("warn","Sem critério automático de exclusão de gestação. Escolha β-hCG ou critérios clínicos.");
+if(!["AMPD"].includes(mac)&&crit==="auto"&&!gravTxt.startsWith("critérios de LAM")) apoio=true;
+if(mac==="mensal"&&wk!=null&&wk<=4.5) apoio=false;
+if(!gravTxt&&ck("grav")) add("bad","Gravidez marcada como excluída sem critério documentado.");
+
+if(lact&&pp!=null&&pp<6) add("warn","Menos de 6 semanas pós-parto: categoria 2 no MEC/OMS.");
+
+const meds=v("meds"), ind=meds.match(INDUTORES);
+const cmSel=COMORB.filter((_,i)=>i&&$("cm_"+i).checked);
+const comorbTxt=[...cmSel,v("comorb")].filter(Boolean).join(", ")||($("cm_0").checked?"nenhuma":"");
+if($("cm_3").checked&&false){}
+if($("cm_11").checked) add("warn","Antecedente de trombose: implante é categoria 2 no MEC/OMS. Registre a avaliação.");
+if($("cm_12").checked) add("warn","Lúpus: com anticorpos antifosfolípides positivos é categoria 3. Verifique.");
+if($("cm_6").checked&&!ind) add("warn","Epilepsia: confira se o anticonvulsivante é indutor enzimático e liste-o em medicamentos.");
+if(!comorbTxt) add("warn","Comorbidades não preenchidas. Marque \"Nenhuma\" se negar.");
+if(ind) add("bad",`Possível indutor enzimático (${ind[0]}): eficácia do implante reduzida. Reavalie o método.`);
+
+CHECKS.forEach(([k,t])=>{if(!ck(k)&&!(k==="grav"&&!gravTxt))add("bad",`Item não confirmado: ${t}.`)});
+
+const label={ok:["ok","Apta para inserção"],warn:["warn","Revisar antes de inserir"],bad:["bad","Não inserir ainda"]}[nivel];
+$("status").innerHTML=`<span class="pill ${label[0]}">${label[1]}</span>`;
+$("alerts").innerHTML=alerts.join("")||`<div class="hint">Nenhuma pendência.</div>`;
+
+// nota
+const x=b=>b?"[X]":"[ ]";
+const car=[v("reg")&&`ciclos ${v("reg")}`,v("fluxo")&&`fluxo ${v("fluxo")}`,v("dur")&&`duração de ${v("dur")} dias`,v("colica")&&`cólicas ${v("colica")}`].filter(Boolean).join(", ");
+let cicloTxt=sit==="lact"?"Amenorreia da lactação":sit==="amen"?"Amenorreia em uso de método hormonal":"";
+if(car) cicloTxt=sit==="menstrua"?car[0].toUpperCase()+car.slice(1):`${cicloTxt}; antes: ${car}`;
+cicloTxt=cicloTxt?cicloTxt+".":"__.";
+const lactTxt=lact?`\nLactante, ${pp!=null?pp:"__"} semanas pós-parto, aleitamento ${aleit||"__"}.`:"";
+const macTxt=mac==="nenhum"?"nenhum":`${macNome}${v("macData")?`, última dose/início em ${br(v("macData"))}`:""}`;
+const troca=mac==="nenhum"||mac==="preserv"?"desejando iniciar":`desejando trocar ${macNome.toLowerCase()} por`;
+const medTxt=meds?(ind?`em uso de ${meds} (ATENÇÃO: possível indutor enzimático)`:`em uso de ${meds}, sem interação relevante`):"nega uso de medicamentos";
+const conduta=nivel==="bad"
+ ?"Inserção adiada até resolução das pendências."+(mac==="AMPD"&&wk>15?" Solicitado β-hCG; orientado preservativo até a inserção.":"")
+ :`Encaminhada para inserção do implante de etonogestrel 68 mg. ${apoio?"Orientado preservativo ou abstinência por 7 dias após a inserção.":"Inserção sem necessidade de método de apoio."}`;
+
+$("nota").textContent=
+`Paciente comparece para aconselhamento contraceptivo, ${troca} método reversível de longa duração (LARC). Após apresentação das opções, opta pelo implante subdérmico de etonogestrel 68 mg (Implanon NXT®).
+
+AGO: G${two(G)} PN${two(P)} C${two(C)} A${two(A)}.${lactTxt}
+DUM: ${v("dum")?br(v("dum")):"não recorda"}.
+Ciclo menstrual: ${cicloTxt}
+MAC atual: ${macTxt||"__"}.
+Comorbidades: ${comorbTxt||"__"}.
+Alergias medicamentosas: ${v("alergias")||"nega"}.
+Medicamentos em uso: ${meds||"nega"}.
+
+CONTRAINDICAÇÕES
+${x(ck("grav")&&gravTxt)} Gravidez excluída com razoável segurança${gravTxt?`: ${gravTxt}`:""}
+${x(ck("mama"))} Sem câncer de mama atual ou suspeito
+${x(ck("sang"))} Sem sangramento genital inexplicado que exija investigação
+${x(ck("fig"))} Sem doença hepática grave ou tumor hepático relevante
+${x(ck("tromb"))} Sem trombose ativa ou contraindicação identificada na avaliação
+${x(ck("alerg"))} Sem alergia conhecida ao etonogestrel ou componentes
+${x(ck("inter"))} Medicamentos em uso avaliados quanto a interações: ${medTxt}
+${x(ck("orient"))} Orientações sobre sangramento irregular, efeitos adversos e IST realizadas
+${lact&&pp!=null&&pp>=6?"\nElegível pelo MEC/OMS, categoria 1 na lactação a partir de 6 semanas pós-parto.\n":""}
+Orientada sobre mecanismo de ação, eficácia (> 99%), duração de 5 anos, alterações do padrão de sangramento (irregular, escape ou amenorreia), efeitos adversos,${lact?" ausência de interferência na lactação,":""} reversibilidade e retorno rápido da fertilidade após a retirada. Orientada que o método não protege contra ISTs e que o preservativo é recomendado.
+
+Dúvidas esclarecidas. Paciente concorda com o método e assina o TCLE.
+
+CONDUTA: ${conduta}${v("obs")?`\n\nObs.: ${v("obs")}`:""}`;
+}
+
+document.addEventListener("input",render);document.addEventListener("change",render);
+$("copiar").addEventListener("click",()=>{const t=$("nota").textContent;
+ navigator.clipboard.writeText(t).then(()=>$("copyMsg").textContent="Nota copiada.").catch(()=>{const r=document.createRange();r.selectNodeContents($("nota"));const s=getSelection();s.removeAllRanges();s.addRange(r);$("copyMsg").textContent="Texto selecionado. Use Ctrl+C para copiar.";});});
+$("limpar").addEventListener("click",()=>{document.querySelectorAll("input,textarea").forEach(e=>{if(e.type==="checkbox")e.checked=false;else if(e.type==="number"&&["g","p","c","a"].includes(e.id))e.value=0;else e.value=""});document.querySelectorAll("select").forEach(s=>s.selectedIndex=0);$("copyMsg").textContent="";$("medico").value="ALNO POIARES VIEIRA";$("crm").value="49410";$("dataIns").value=new Date().toLocaleDateString("sv-SE");$("autoriza").selectedIndex=0;$("contatoBox").hidden=false;render();});
+
+// ---------- Termo PDF ----------
+const INCL=["Atendida pelo consultório na rua","Adolescente em situação de maior vulnerabilidade social","Em situação de rua","Vivendo com HIV/Aids","Uso prejudicial de álcool e outras drogas","Transtorno mental de difícil manejo","Doença crônica grave (diabetes, hipertensão)","Sífilis, hepatites","Grande multípara (> 5 gestações)","Outras indicações"];
+$("inclBox").innerHTML=INCL.map((t,i)=>`<label class="chk"><input type="checkbox" id="in_${i}"><span>${t}</span></label>`).join("");
+$("dataIns").value=new Date().toLocaleDateString("sv-SE");
+function sugerirIncl(e){
+ if(!e||!e.target.id)return;
+ if(e.target.id==="cm_10")$("in_3").checked=e.target.checked;
+ if(e.target.id==="cm_1"||e.target.id==="cm_2")$("in_6").checked=$("cm_1").checked||$("cm_2").checked;
+ if(e.target.id==="g")$("in_8").checked=+$("g").value>5;
+ if(e.target.id==="outrasInd")$("in_9").checked=!!$("outrasInd").value.trim();
+ if(e.target.id==="autoriza")$("contatoBox").hidden=$("autoriza").value==="nao";
+}
+document.addEventListener("input",sugerirIncl);document.addEventListener("change",sugerirIncl);
+
+async function gerarPDF(){
+ const {PDFDocument,StandardFonts,rgb}=PDFLib;
+ const bytes=await (await fetch("termo.pdf")).arrayBuffer();
+ const doc=await PDFDocument.load(bytes);
+ const font=await doc.embedFont(StandardFonts.Helvetica);
+ const pages=doc.getPages(), H=841.92, cor=rgb(0.05,0.1,0.35);
+ const v=id=>$(id).value.trim();
+ const t=(pg,x,top,txt,size=10)=>{if(!txt)return;pages[pg].drawText(String(txt),{x,y:H-top-10.5,size,font,color:cor});};
+ const X=(pg,x,top,on)=>{if(on)t(pg,x+2.6,top,"X",9);};
+ const parts=d=>{if(!d)return null;const[y,m,dd]=d.split("-");return[dd,m,y];};
+ // escreve valores nos trechos "___" de um padrão, distribuindo por largura de caractere
+ const slots=(pg,x0,x1,top,pat,vals)=>{if(!vals)return;const cw=(x1-x0)/pat.length;let i=0,k=0;
+  while(i<pat.length&&k<vals.length){if(pat[i]==="_"){let j=i;while(j<pat.length&&pat[j]==="_")j++;
+   let val=String(vals[k++]);if(j-i<=3&&val.length===4)val=val.slice(2);
+   const w=font.widthOfTextAtSize(val,10);t(pg,x0+((i+j)/2)*cw-w/2,top,val);i=j;}else i++;}};
+ const hoje=parts(v("dataIns"))||parts(new Date().toLocaleDateString("sv-SE"));
+ const nome=v("nome");
+ // pág. 4 — consentimento
+ t(3,224,276,nome);
+ slots(3,125,235,331,"____/______/_____.",hoje);
+ slots(3,125,242,690,"____/______/______.",hoje);
+ // pág. 5 — busca ativa
+ t(4,124,166,nome);
+ const aut=v("autoriza")==="sim";
+ X(4,85,262,!aut); X(4,85,290,aut);
+ if(aut){
+  X(4,85,318,!!v("tel")); t(4,159,318,v("ddd"),9); t(4,182,318,v("tel"));
+  X(4,85,331,$("porCorreio").checked); if($("porCorreio").checked)t(4,220,331,v("end"),9);
+  X(4,85,345,!!v("email")); t(4,140,345,v("email"));
+  X(4,85,359,$("porVisita").checked); if($("porVisita").checked)t(4,253,359,v("end"),9);
+  t(4,352,387,v("outroContato"),9);
+ }
+ slots(4,125,239,511,"____/____/________",hoje);
+ t(4,273,525,nome.toUpperCase(),9);
+ slots(4,180,287,538,"____/____/_______",parts(v("nasc")));
+ // pág. 6 — ficha de cadastramento
+ const crit=[[407,329],[407,344],[338,358],[352,372],[465,387],[437,401],[489,416],[344,430],[297,444],[498,459]];
+ crit.forEach(([x,y],i)=>X(5,x,y,$("in_"+i).checked));
+ t(5,247,459,v("outrasInd"),9);
+ slots(5,85,115,508,"G___",[v("g")]);
+ slots(5,118,203,508,"P___C___A___",[v("p"),v("c"),v("a")]);
+ slots(5,202,268,522,"___/___/___",parts(v("dataParto")));
+ slots(5,119,186,536,"___/___/___",parts(v("dum")));
+ const fezTeste=v("critGrav")==="hcg";
+ X(5,261,549,fezTeste); X(5,304,549,!fezTeste);
+ slots(5,235,302,563,"___/___/___",parts(v("retorno")));
+ slots(5,182,249,591,"___/___/___",hoje);
+ t(5,249,605,v("estab"),9);
+ slots(5,182,249,618,"___/___/___",parts(v("validade")));
+ t(5,312,618,v("lote"));
+ t(5,182,632,v("medico"));
+ t(5,119,646,v("crm"));
+ return await doc.save();
+}
+window.gerarPDF=gerarPDF;
+$("gerar").addEventListener("click",async()=>{
+ $("pdfMsg").textContent="Gerando...";
+ try{
+  if(!$("nome").value.trim()){$("pdfMsg").textContent="Preencha o nome da paciente antes de gerar o termo.";return;}
+  const b=await gerarPDF();
+  const url=URL.createObjectURL(new Blob([b],{type:"application/pdf"}));
+  const w=window.open(url,"_blank");
+  if(!w){const a=document.createElement("a");a.href=url;a.download="termo-implante.pdf";a.click();}
+  $("pdfMsg").textContent="Termo aberto em nova aba. Use Ctrl+P para imprimir.";
+ }catch(err){$("pdfMsg").textContent="Não foi possível gerar o PDF: "+err.message;}
+});
+render();
+</script>
+</body></html>
