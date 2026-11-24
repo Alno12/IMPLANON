@@ -11,7 +11,8 @@
 --display:"Space Grotesk",system-ui,sans-serif;--body:"Inter",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,monospace}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101615;--card:#18201e;--fg:#e4ecea;--muted:#9aa9a5;--line:#2c3835;--accent:#4cc3b1;--ok:#5cc77a;--warn:#e0a640;--bad:#f08079;--note:#141c1a;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#101615;--card:#18201e;--fg:#e4ecea;--muted:#9aa9a5;--line:#2c3835;--accent:#4cc3b1;--ok:#5cc77a;--warn:#e0a640;--bad:#f08079;--note:#141c1a;color-scheme:dark}
-body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:14px;line-height:1.5}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:14px;line-height:1.5}
 .wrap{max-width:1200px;margin:0 auto;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 h1{font-family:var(--display);font-size:1.6rem;margin:0;text-wrap:balance}
 .sub{color:var(--muted);margin:4px 0 20px}
@@ -41,7 +42,10 @@ pre{font-family:var(--mono);font-size:.78rem;white-space:pre-wrap;word-break:bre
 .btns{display:flex;gap:8px;flex-wrap:wrap}
 button{font:inherit;font-weight:600;padding:8px 14px;border-radius:6px;border:1px solid var(--accent);background:var(--accent);color:var(--card);cursor:pointer}
 button.sec{background:transparent;color:var(--accent)}
-.hint{color:var(--muted);font-size:.8rem}
+.hint{color:var(--muted);font-size:.8rem;margin:0}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;border-bottom:1px solid var(--line)}
+.tab{background:transparent;color:var(--muted);border:0;border-bottom:3px solid transparent;border-radius:0;padding:8px 12px}
+.tab.on{color:var(--accent);border-bottom-color:var(--accent)}
 </style>
 <script src="pdf-lib.min.js"></script>
 </head>
@@ -49,9 +53,13 @@ button.sec{background:transparent;color:var(--accent)}
 
 <div class="wrap">
 <h1>Consulta Implante Etonogestrel</h1>
-<p class="sub">Aconselhamento e avaliação pré-inserção do Implanon NXT® 68 mg. A nota é montada enquanto você preenche.</p>
+<p class="sub">Implanon NXT® 68 mg. As notas são montadas enquanto você preenche.</p>
+<div class="tabs" role="tablist">
+<button type="button" role="tab" id="tabBtnC" class="tab on" aria-selected="true">1. Consulta (indicação)</button>
+<button type="button" role="tab" id="tabBtnI" class="tab" aria-selected="false">2. Dia da inserção</button>
+</div>
 
-<div class="grid">
+<div class="grid" id="tabConsulta">
 <div class="col">
 
 <section>
@@ -150,20 +158,8 @@ button.sec{background:transparent;color:var(--accent)}
 </section>
 
 <section>
-<h2>Inserção e ficha de cadastramento</h2>
-<div class="row">
-<label class="f">Data da inserção<input id="dataIns" type="date"></label>
-<label class="f">Retorno agendado<input id="retorno" type="date"></label>
-</div>
-<div class="row">
-<label class="f">Lote<input id="lote"></label>
-<label class="f">Validade<input id="validade" type="date"></label>
-</div>
-<label class="f">Estabelecimento de inserção<input id="estab"></label>
-<div class="row">
-<label class="f" style="flex-basis:220px">Médico<input id="medico" value="ALNO POIARES VIEIRA"></label>
-<label class="f">CRM<input id="crm" value="49410"></label>
-</div>
+<h2>Ficha de cadastramento</h2>
+<p class="hint">Os dados do implante e da inserção ficam em branco no termo e são preenchidos no dia da inserção.</p>
 <h3>Critérios de inclusão</h3>
 <div id="inclBox"></div>
 <label class="f">Outras indicações<input id="outrasInd"></label>
@@ -191,6 +187,95 @@ button.sec{background:transparent;color:var(--accent)}
 </div>
 <span class="hint" id="copyMsg" aria-live="polite"></span>
 <span class="hint" id="pdfMsg" aria-live="polite"></span>
+</section>
+</div>
+</div>
+
+<div class="grid" id="tabInsercao" hidden>
+<div class="col">
+<section>
+<h2>Paciente</h2>
+<p class="hint">Se a consulta foi feita nesta mesma aba, estes dados vêm preenchidos.</p>
+<label class="f">Nome completo<input id="iNome"></label>
+<div class="row">
+<label class="f">G<input id="iG" type="number" min="0"></label>
+<label class="f">PN<input id="iP" type="number" min="0"></label>
+<label class="f">C<input id="iC" type="number" min="0"></label>
+<label class="f">A<input id="iA" type="number" min="0"></label>
+</div>
+<label class="f">Data do último parto/aborto<input id="iParto" type="date"></label>
+<h3>Critérios de inclusão</h3>
+<div id="iInclBox"></div>
+<label class="f">Outras indicações<input id="iOutrasInd"></label>
+</section>
+
+<section>
+<h2>Exclusão de gravidez no dia</h2>
+<div class="row">
+<label class="f">DUM<input id="iDum" type="date"></label>
+<label class="f">Teste de gravidez
+<select id="iTeste"><option value=""></option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
+</div>
+<div class="row" id="iTesteBox" hidden>
+<label class="f">Tipo<select id="iTesteTipo"><option>teste rápido urinário</option><option>β-hCG sérico</option></select></label>
+<label class="f">Data<input id="iTesteData" type="date"></label>
+<label class="f">Resultado<select id="iTesteRes"><option>negativo</option><option>positivo</option></select></label>
+</div>
+<label class="f" id="iSemTesteBox" hidden>Motivo para não testar<input id="iSemTeste" value="gravidez excluída por critérios clínicos (OMS)"></label>
+</section>
+
+<section>
+<h2>Procedimento</h2>
+<div class="row">
+<label class="f">Data da inserção<input id="iData" type="date"></label>
+<label class="f">Braço
+<select id="iBraco"><option value="esquerdo">Esquerdo</option><option value="direito">Direito</option></select></label>
+<label class="f">Braço não dominante?
+<select id="iNaoDom"><option value="sim">Sim</option><option value="nao">Não</option></select></label>
+</div>
+<div class="row">
+<label class="f">Anestesia (lidocaína 2%, mL)<input id="iAnest" type="number" min="0" step="0.5" value="2"></label>
+<label class="f">Implante palpável após inserção
+<select id="iPalp"><option value="sim">Sim, palpado por médico e paciente</option><option value="nao">Não palpável</option></select></label>
+</div>
+<label class="f">Intercorrências<input id="iInterc" placeholder="Vazio = sem intercorrências"></label>
+<label class="f">Método de apoio por 7 dias
+<select id="iApoio"><option value="nao">Não necessário</option><option value="sim">Sim, preservativo ou abstinência</option></select></label>
+</section>
+
+<section>
+<h2>Implante e profissional</h2>
+<div class="row">
+<label class="f">Lote<input id="iLote"></label>
+<label class="f">Validade<input id="iValidade" type="date"></label>
+</div>
+<label class="f">Estabelecimento de inserção<input id="iEstab"></label>
+<div class="row">
+<label class="f">Retorno agendado<input id="iRetorno" type="date"></label>
+<label class="f">Retirada/troca em
+<select id="iAnos"><option value="5">5 anos</option><option value="3">3 anos</option></select></label>
+</div>
+<div class="row">
+<label class="f" style="flex-basis:220px">Médico<input id="iMedico" value="ALNO POIARES VIEIRA"></label>
+<label class="f">CRM<input id="iCrm" value="49410"></label>
+</div>
+</section>
+</div>
+
+<div class="col sticky">
+<section>
+<h2>Checagem do dia</h2>
+<div class="alerts" id="iAlerts"></div>
+</section>
+<section>
+<h2>Nota de procedimento</h2>
+<pre id="iNota"></pre>
+<div class="btns">
+<button id="iCopiar" type="button">Copiar nota</button>
+<button id="iGerar" type="button">Imprimir página 6 completa</button>
+<button id="iLimpar" type="button" class="sec">Nova inserção</button>
+</div>
+<span class="hint" id="iMsg" aria-live="polite"></span>
 </section>
 </div>
 </div>
@@ -322,12 +407,11 @@ CONDUTA: ${conduta}${v("obs")?`\n\nObs.: ${v("obs")}`:""}`;
 document.addEventListener("input",render);document.addEventListener("change",render);
 $("copiar").addEventListener("click",()=>{const t=$("nota").textContent;
  navigator.clipboard.writeText(t).then(()=>$("copyMsg").textContent="Nota copiada.").catch(()=>{const r=document.createRange();r.selectNodeContents($("nota"));const s=getSelection();s.removeAllRanges();s.addRange(r);$("copyMsg").textContent="Texto selecionado. Use Ctrl+C para copiar.";});});
-$("limpar").addEventListener("click",()=>{document.querySelectorAll("input,textarea").forEach(e=>{if(e.type==="checkbox")e.checked=false;else if(e.type==="number"&&["g","p","c","a"].includes(e.id))e.value=0;else e.value=""});document.querySelectorAll("select").forEach(s=>s.selectedIndex=0);$("copyMsg").textContent="";$("medico").value="ALNO POIARES VIEIRA";$("crm").value="49410";$("dataIns").value=new Date().toLocaleDateString("sv-SE");$("autoriza").selectedIndex=0;$("contatoBox").hidden=false;render();});
+$("limpar").addEventListener("click",()=>{document.querySelectorAll("input,textarea").forEach(e=>{if(e.type==="checkbox")e.checked=false;else if(e.type==="number"&&["g","p","c","a"].includes(e.id))e.value=0;else e.value=""});document.querySelectorAll("select").forEach(s=>s.selectedIndex=0);$("copyMsg").textContent="";$("autoriza").selectedIndex=0;$("contatoBox").hidden=false;render();});
 
 // ---------- Termo PDF ----------
 const INCL=["Atendida pelo consultório na rua","Adolescente em situação de maior vulnerabilidade social","Em situação de rua","Vivendo com HIV/Aids","Uso prejudicial de álcool e outras drogas","Transtorno mental de difícil manejo","Doença crônica grave (diabetes, hipertensão)","Sífilis, hepatites","Grande multípara (> 5 gestações)","Outras indicações"];
 $("inclBox").innerHTML=INCL.map((t,i)=>`<label class="chk"><input type="checkbox" id="in_${i}"><span>${t}</span></label>`).join("");
-$("dataIns").value=new Date().toLocaleDateString("sv-SE");
 function sugerirIncl(e){
  if(!e||!e.target.id)return;
  if(e.target.id==="cm_10")$("in_3").checked=e.target.checked;
@@ -338,60 +422,89 @@ function sugerirIncl(e){
 }
 document.addEventListener("input",sugerirIncl);document.addEventListener("change",sugerirIncl);
 
-async function gerarPDF(){
+async function abrirTermo(){
  const {PDFDocument,StandardFonts,rgb}=PDFLib;
- const bytes=await (await fetch("termo.pdf")).arrayBuffer();
- const doc=await PDFDocument.load(bytes);
+ const doc=await PDFDocument.load(await (await fetch("termo.pdf")).arrayBuffer());
  const font=await doc.embedFont(StandardFonts.Helvetica);
- const pages=doc.getPages(), H=841.92, cor=rgb(0.05,0.1,0.35);
- const v=id=>$(id).value.trim();
- const t=(pg,x,top,txt,size=10)=>{if(!txt)return;pages[pg].drawText(String(txt),{x,y:H-top-10.5,size,font,color:cor});};
- const X=(pg,x,top,on)=>{if(on)t(pg,x+2.6,top,"X",9);};
- const parts=d=>{if(!d)return null;const[y,m,dd]=d.split("-");return[dd,m,y];};
- // escreve valores nos trechos "___" de um padrão, distribuindo por largura de caractere
- const slots=(pg,x0,x1,top,pat,vals)=>{if(!vals)return;const cw=(x1-x0)/pat.length;let i=0,k=0;
-  while(i<pat.length&&k<vals.length){if(pat[i]==="_"){let j=i;while(j<pat.length&&pat[j]==="_")j++;
-   let val=String(vals[k++]);if(j-i<=3&&val.length===4)val=val.slice(2);
-   const w=font.widthOfTextAtSize(val,10);t(pg,x0+((i+j)/2)*cw-w/2,top,val);i=j;}else i++;}};
- const hoje=parts(v("dataIns"))||parts(new Date().toLocaleDateString("sv-SE"));
- const nome=v("nome");
- // pág. 4 — consentimento
- t(3,224,276,nome);
- slots(3,125,235,331,"____/______/_____.",hoje);
- slots(3,125,242,690,"____/______/______.",hoje);
- // pág. 5 — busca ativa
- t(4,124,166,nome);
- const aut=v("autoriza")==="sim";
- X(4,85,262,!aut); X(4,85,290,aut);
- if(aut){
-  X(4,85,318,!!v("tel")); t(4,159,318,v("ddd"),9); t(4,182,318,v("tel"));
-  X(4,85,331,$("porCorreio").checked); if($("porCorreio").checked)t(4,220,331,v("end"),9);
-  X(4,85,345,!!v("email")); t(4,140,345,v("email"));
-  X(4,85,359,$("porVisita").checked); if($("porVisita").checked)t(4,253,359,v("end"),9);
-  t(4,352,387,v("outroContato"),9);
- }
- slots(4,125,239,511,"____/____/________",hoje);
- t(4,273,525,nome.toUpperCase(),9);
- slots(4,180,287,538,"____/____/_______",parts(v("nasc")));
- // pág. 6 — ficha de cadastramento
+ const H=841.92, cor=rgb(0.05,0.1,0.35);
+ const mk=pages=>{
+  const t=(pg,x,top,txt,size=10)=>{if(!txt)return;pages[pg].drawText(String(txt),{x,y:H-top-10.5,size,font,color:cor});};
+  const X=(pg,x,top,on)=>{if(on)t(pg,x+2.6,top,"X",9);};
+  const slots=(pg,x0,x1,top,pat,vals)=>{if(!vals)return;const cw=(x1-x0)/pat.length;let i=0,k=0;
+   while(i<pat.length&&k<vals.length){if(pat[i]==="_"){let j=i;while(j<pat.length&&pat[j]==="_")j++;
+    let val=String(vals[k++]??"");if(j-i<=3&&val.length===4)val=val.slice(2);
+    const w=font.widthOfTextAtSize(val,10);t(pg,x0+((i+j)/2)*cw-w/2,top,val);i=j;}else i++;}};
+  return {t,X,slots};};
+ return {doc,mk};
+}
+async function abrirTermoCom(doc){
+ const font=await doc.embedFont(PDFLib.StandardFonts.Helvetica);
+ const H=841.92, cor=PDFLib.rgb(0.05,0.1,0.35);
+ return {mk:pages=>{
+  const t=(pg,x,top,txt,size=10)=>{if(!txt)return;pages[pg].drawText(String(txt),{x,y:H-top-10.5,size,font,color:cor});};
+  const X=(pg,x,top,on)=>{if(on)t(pg,x+2.6,top,"X",9);};
+  const slots=(pg,x0,x1,top,pat,vals)=>{if(!vals)return;const cw=(x1-x0)/pat.length;let i=0,k=0;
+   while(i<pat.length&&k<vals.length){if(pat[i]==="_"){let j=i;while(j<pat.length&&pat[j]==="_")j++;
+    let val=String(vals[k++]??"");if(j-i<=3&&val.length===4)val=val.slice(2);
+    const w=font.widthOfTextAtSize(val,10);t(pg,x0+((i+j)/2)*cw-w/2,top,val);i=j;}else i++;}};
+  return {t,X,slots};}};
+}
+const parts=d=>{if(!d)return null;const[y,m,dd]=d.split("-");return[dd,m,y];};
+const hojeISO=()=>new Date().toLocaleDateString("sv-SE");
+// d: {incl:[bool x10], outras, g,p,c,a, parto, completo, dum, teste, retorno, data, estab, validade, lote, medico, crm}
+function pagina6(f,pg,d){
  const crit=[[407,329],[407,344],[338,358],[352,372],[465,387],[437,401],[489,416],[344,430],[297,444],[498,459]];
- crit.forEach(([x,y],i)=>X(5,x,y,$("in_"+i).checked));
- t(5,247,459,v("outrasInd"),9);
- slots(5,85,115,508,"G___",[v("g")]);
- slots(5,118,203,508,"P___C___A___",[v("p"),v("c"),v("a")]);
- slots(5,202,268,522,"___/___/___",parts(v("dataParto")));
- slots(5,119,186,536,"___/___/___",parts(v("dum")));
- const fezTeste=v("critGrav")==="hcg";
- X(5,261,549,fezTeste); X(5,304,549,!fezTeste);
- slots(5,235,302,563,"___/___/___",parts(v("retorno")));
- slots(5,182,249,591,"___/___/___",hoje);
- t(5,249,605,v("estab"),9);
- slots(5,182,249,618,"___/___/___",parts(v("validade")));
- t(5,312,618,v("lote"));
- t(5,182,632,v("medico"));
- t(5,119,646,v("crm"));
+ crit.forEach(([x,y],i)=>f.X(pg,x,y,d.incl[i]));
+ f.t(pg,247,459,d.outras,9);
+ f.slots(pg,85,115,508,"G___",[d.g]);
+ f.slots(pg,118,203,508,"P___C___A___",[d.p,d.c,d.a]);
+ f.slots(pg,202,268,522,"___/___/___",parts(d.parto));
+ if(!d.completo)return;
+ f.slots(pg,119,186,536,"___/___/___",parts(d.dum));
+ f.X(pg,261,549,d.teste==="sim"); f.X(pg,304,549,d.teste==="nao");
+ f.slots(pg,235,302,563,"___/___/___",parts(d.retorno));
+ f.slots(pg,182,249,591,"___/___/___",parts(d.data));
+ f.t(pg,249,605,d.estab,9);
+ f.slots(pg,182,249,618,"___/___/___",parts(d.validade));
+ f.t(pg,312,618,d.lote);
+ f.t(pg,182,632,d.medico);
+ f.t(pg,119,646,d.crm);
+}
+async function gerarPDF(){
+ const v=id=>$(id).value.trim();
+ const {doc,mk}=await abrirTermo(); const f=mk(doc.getPages());
+ const hoje=parts(hojeISO()), nome=v("nome");
+ f.t(3,224,276,nome);
+ f.slots(3,125,235,331,"____/______/_____.",hoje);
+ f.slots(3,125,242,690,"____/______/______.",hoje);
+ f.t(4,124,166,nome);
+ const aut=v("autoriza")==="sim";
+ f.X(4,85,262,!aut); f.X(4,85,290,aut);
+ if(aut){
+  f.X(4,85,318,!!v("tel")); f.t(4,159,318,v("ddd"),9); f.t(4,182,318,v("tel"));
+  f.X(4,85,331,$("porCorreio").checked); if($("porCorreio").checked)f.t(4,220,331,v("end"),9);
+  f.X(4,85,345,!!v("email")); f.t(4,140,345,v("email"));
+  f.X(4,85,359,$("porVisita").checked); if($("porVisita").checked)f.t(4,253,359,v("end"),9);
+  f.t(4,352,387,v("outroContato"),9);
+ }
+ f.slots(4,125,239,511,"____/____/________",hoje);
+ f.t(4,273,525,nome.toUpperCase(),9);
+ f.slots(4,180,287,538,"____/____/_______",parts(v("nasc")));
+ pagina6(f,5,{incl:INCL.map((_,i)=>$("in_"+i).checked),outras:v("outrasInd"),g:v("g"),p:v("p"),c:v("c"),a:v("a"),parto:v("dataParto"),completo:false});
  return await doc.save();
 }
+async function gerarP6(){
+ const v=id=>$(id).value.trim();
+ const {doc:orig}=await abrirTermo();
+ const doc=await PDFLib.PDFDocument.create();
+ const [pg6]=await doc.copyPages(orig,[5]); doc.addPage(pg6);
+ const {mk}=await abrirTermoCom(doc);
+ const f=mk(doc.getPages());
+ pagina6(f,0,{incl:INCL.map((_,i)=>$("ii_"+i).checked),outras:v("iOutrasInd"),g:v("iG"),p:v("iP"),c:v("iC"),a:v("iA"),parto:v("iParto"),completo:true,
+  dum:v("iDum"),teste:v("iTeste"),retorno:v("iRetorno"),data:v("iData"),estab:v("iEstab"),validade:v("iValidade"),lote:v("iLote"),medico:v("iMedico"),crm:v("iCrm")});
+ return await doc.save();
+}
+window.gerarP6=gerarP6;
 window.gerarPDF=gerarPDF;
 $("gerar").addEventListener("click",async()=>{
  $("pdfMsg").textContent="Gerando...";
@@ -404,6 +517,76 @@ $("gerar").addEventListener("click",async()=>{
   $("pdfMsg").textContent="Termo aberto em nova aba. Use Ctrl+P para imprimir.";
  }catch(err){$("pdfMsg").textContent="Não foi possível gerar o PDF: "+err.message;}
 });
+
+// ---------- Aba inserção ----------
+$("iInclBox").innerHTML=INCL.map((t,i)=>`<label class="chk"><input type="checkbox" id="ii_${i}"><span>${t}</span></label>`).join("");
+$("iData").value=hojeISO();
+function abrirAba(ins){
+ $("tabConsulta").hidden=ins; $("tabInsercao").hidden=!ins;
+ $("tabBtnC").classList.toggle("on",!ins); $("tabBtnI").classList.toggle("on",ins);
+ $("tabBtnC").setAttribute("aria-selected",!ins); $("tabBtnI").setAttribute("aria-selected",ins);
+ if(ins){ // traz dados da consulta para campos vazios
+  [["nome","iNome"],["g","iG"],["p","iP"],["c","iC"],["a","iA"],["dataParto","iParto"],["outrasInd","iOutrasInd"],["dum","iDum"]].forEach(([c,i])=>{if(!$(i).value&&$(c).value&&!(["g","p","c","a"].includes(c)&&$(c).value==="0"&&$("nome").value===""))$(i).value=$(c).value;});
+  if(!INCL.some((_,i)=>$("ii_"+i).checked))INCL.forEach((_,i)=>$("ii_"+i).checked=$("in_"+i).checked);
+  renderI();
+ }
+ window.scrollTo(0,0);
+}
+$("tabBtnC").addEventListener("click",()=>abrirAba(false));
+$("tabBtnI").addEventListener("click",()=>abrirAba(true));
+
+function addAnos(iso,n){if(!iso)return"";const d=new Date(iso+"T12:00");d.setFullYear(d.getFullYear()+n);return d.toLocaleDateString("sv-SE");}
+function renderI(){
+ const v=id=>$(id).value.trim();
+ $("iTesteBox").hidden=v("iTeste")!=="sim"; $("iSemTesteBox").hidden=v("iTeste")!=="nao";
+ const al=[]; const add=(c,t)=>al.push(`<div class="alert ${c}"><span>${t}</span></div>`);
+ if(!v("iNome"))add("warn","Preencha o nome da paciente.");
+ if(!v("iTeste"))add("warn","Informe se foi feito teste de gravidez.");
+ if(v("iTeste")==="sim"&&v("iTesteRes")==="positivo")add("bad","Teste de gravidez positivo: não inserir.");
+ if(!v("iLote")||!v("iValidade"))add("warn","Informe lote e validade do implante.");
+ if(v("iValidade")&&v("iData")&&v("iValidade")<v("iData"))add("bad","Implante vencido na data da inserção.");
+ if(v("iPalp")==="nao")add("bad","Implante não palpável: confirmar localização por imagem (US) e orientar método de apoio até a confirmação.");
+ if(v("iNaoDom")==="nao")add("warn","Inserção no braço dominante: registre o motivo em intercorrências.");
+ if(!v("iRetorno"))add("warn","Agende o retorno.");
+ $("iAlerts").innerHTML=al.join("")||`<div class="hint">Tudo preenchido.</div>`;
+
+ const G=+v("iG")||0,P=+v("iP")||0,C=+v("iC")||0,A=+v("iA")||0;
+ const incl=INCL.map((t,i)=>$("ii_"+i).checked?(i===9&&v("iOutrasInd")?`Outras: ${v("iOutrasInd")}`:t):null).filter(Boolean);
+ const teste=v("iTeste")==="sim"?`${v("iTesteTipo")} em ${br(v("iTesteData"))}: ${v("iTesteRes")}`:v("iTeste")==="nao"?`não realizado; ${v("iSemTeste")}`:"__";
+ const anos=+v("iAnos"), retirada=addAnos(v("iData"),anos);
+ $("iNota").textContent=
+`NOTA DE PROCEDIMENTO: INSERÇÃO DE IMPLANTE SUBDÉRMICO DE ETONOGESTREL 68 mg (IMPLANON NXT®)
+
+Paciente: ${v("iNome")||"__"}
+AGO: G${two(G)} PN${two(P)} C${two(C)} A${two(A)}. Último parto/aborto: ${v("iParto")?br(v("iParto")):"não se aplica"}.
+Critérios de inclusão: ${incl.length?incl.join("; "):"__"}.
+DUM: ${v("iDum")?br(v("iDum")):"não recorda"}.
+Teste de gravidez: ${teste}.
+TCLE e termo de busca ativa assinados.
+
+PROCEDIMENTO (${br(v("iData"))}, ${v("iEstab")||"__"}):
+Paciente em decúbito dorsal, braço ${v("iBraco")} ${v("iNaoDom")==="sim"?"(não dominante)":"(dominante)"} em abdução e rotação externa. Marcado o local de inserção na face interna do braço, sobre o músculo tríceps, cerca de 8-10 cm acima do epicôndilo medial e 3-5 cm posterior ao sulco bicipital. Antissepsia, anestesia local com lidocaína 2% ${v("iAnest")||"__"} mL. Inserção subdérmica com aplicador próprio, sem intercorrências técnicas. ${v("iPalp")==="sim"?"Implante palpado pelo médico e pela paciente após a inserção.":"IMPLANTE NÃO PALPÁVEL após a inserção."} Curativo e enfaixamento compressivo.
+Intercorrências: ${v("iInterc")||"nenhuma"}.
+
+DADOS DO IMPLANTE: lote ${v("iLote")||"__"}, validade ${v("iValidade")?br(v("iValidade")):"__"}.
+
+ORIENTAÇÕES: retirar a faixa compressiva em 24 h e o curativo em 3 a 5 dias; manter o local limpo e seco; retornar se houver dor intensa, sinais de infecção, saída do implante ou se ele deixar de ser palpável. ${v("iApoio")==="sim"?"Usar preservativo ou abstinência por 7 dias.":"Sem necessidade de método de apoio."} Esperadas alterações do padrão de sangramento. O implante não protege contra ISTs. Retirada ou troca prevista até ${retirada?br(retirada):"__"} (${anos} anos).
+Retorno agendado: ${v("iRetorno")?br(v("iRetorno")):"__"}.
+
+${v("iMedico")} - CRM ${v("iCrm")}`;
+}
+$("tabInsercao").addEventListener("input",renderI);$("tabInsercao").addEventListener("change",renderI);
+$("iCopiar").addEventListener("click",()=>{navigator.clipboard.writeText($("iNota").textContent).then(()=>$("iMsg").textContent="Nota copiada.").catch(()=>{const r=document.createRange();r.selectNodeContents($("iNota"));const s=getSelection();s.removeAllRanges();s.addRange(r);$("iMsg").textContent="Texto selecionado. Use Ctrl+C para copiar.";});});
+$("iGerar").addEventListener("click",async()=>{
+ $("iMsg").textContent="Gerando...";
+ try{const b=await gerarP6();const url=URL.createObjectURL(new Blob([b],{type:"application/pdf"}));
+  const w=window.open(url,"_blank");if(!w){const a=document.createElement("a");a.href=url;a.download="ficha-insercao.pdf";a.click();}
+  $("iMsg").textContent="Página 6 aberta em nova aba. Use Ctrl+P para imprimir.";
+ }catch(err){$("iMsg").textContent="Não foi possível gerar o PDF: "+err.message;}
+});
+$("iLimpar").addEventListener("click",()=>{$("tabInsercao").querySelectorAll("input").forEach(e=>{if(e.type==="checkbox")e.checked=false;else e.value=""});$("tabInsercao").querySelectorAll("select").forEach(s=>s.selectedIndex=0);
+ $("iData").value=hojeISO();$("iMedico").value="ALNO POIARES VIEIRA";$("iCrm").value="49410";$("iAnest").value="2";$("iSemTeste").value="gravidez excluída por critérios clínicos (OMS)";$("iMsg").textContent="";renderI();});
+renderI();
 render();
 </script>
 </body></html>
